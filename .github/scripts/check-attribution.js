@@ -9,7 +9,7 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
-const ATTRIBUTION = 'Built by 72 Knots. Method by';
+const ATTRIBUTION = 'Built by 72 Knots Method by 72Knots.ai';
 // CLA.md and CONTRIBUTING.md are shared verbatim across all three repositories
 // and carry the line already; they are checked, not exempt.
 const EXEMPT = new Set([]);
