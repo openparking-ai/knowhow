@@ -78,4 +78,4 @@ Nothing in steps 1–6 waits on step 7.
 
 ---
 
-Built by 72 Knots. Method by [72Knots.ai](https://72knots.ai)
+Built by 72 Knots Method by 72Knots.ai
