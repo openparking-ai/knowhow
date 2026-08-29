@@ -23,6 +23,7 @@ reasoning behind every choice — including the ones that turned out to be wrong
 |---|---|
 | [platform](https://github.com/openparking-ai/platform) | Node/Express/Postgres server · AGPL-3.0 |
 | [lane-controller](https://github.com/openparking-ai/lane-controller) | Python lane controller · AGPL-3.0 |
+| [vehicle-id](https://github.com/openparking-ai/vehicle-id) | Python vehicle identification, its own system with its own contract · AGPL-3.0 |
 | knowhow | this repository · CC BY-SA 4.0 |
 
 ## Licence
