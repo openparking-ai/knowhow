@@ -1,16 +1,21 @@
 # The lane sequence
 
-Fixed. Every lane does exactly this, in exactly this order.
+What a lane does, and what it does instead when it cannot.
 
 ```
-1. arming loop detects a vehicle
+1. the arming loops report a vehicle presenting
 2. controller grabs camera frame(s)
-3. Vehicle ID: plate, make, model, colour, distinguishing marks, confidence
+3. Vehicle ID: is a vehicle there at all, and if so, what is it and how sure are we
 4. decision from LOCAL cached allow/pricing rules
-5. vend relay opens the barrier
+5. vend relay opens the barrier, and a PENDING entry is recorded
 6. the barrier closes itself on its own closing loop
-7. the event is reported to the server when connectivity allows
+7. the loops after the gate say whether a vehicle actually went through
+8. the events are reported to the server when connectivity allows
 ```
+
+Steps 5 to 7 do not always happen. Three answers at step 3 and 4 stop the
+sequence there, none of them silent: nothing was
+present, nothing could be identified, or the rules refuse this vehicle.
 
 ## Step 6 is the one to read twice
 
@@ -28,6 +33,35 @@ all.
 This costs us nothing and removes an entire category of incident. It also means
 gate timing is a barrier setting, configured by the installer, never a value in
 our config file.
+
+## Step 1: how many loops arm the lane is a site setting
+
+A site declares whether it has one arming loop or two. With two, both must read
+occupied together before anything happens, so an object has to span the gap
+between them — a person standing on one loop with a piece of metal does not.
+One loop reading alone arms nothing, and that is recorded rather than dropped.
+
+A site with one arming loop is not refused. What it does not get is named in the
+record on every vehicle rather than described here.
+
+## Step 3 asks two questions, not one
+
+**Is a vehicle there** is asked before **what is it**, and they are separate
+answers. A car with a filthy or missing front plate is a legitimate entry and
+must be admitted to the fallback path. A piece of metal on the loop is not a
+vehicle and must receive nothing at all — no ticket, no session, no barrier.
+
+That refusal is not a fallback. A fallback ends in a ticket and a human; this
+ends in nothing, because there is no car. A rejected arming is logged, so a lane
+being worked appears as a pattern instead of as silence.
+
+**The presence gate is unvalidated against real vehicles, opt-in, and off until
+a site turns it on.** Every number behind it was measured on synthetic scenes;
+it has never seen a real lane. With it off, presence is "not measured" and the
+lane behaves exactly as it did before the stage existed. Where it is on and
+cannot answer, it also answers "not measured" — never "no vehicle", because a
+confident no at a lane is a refused customer and refusing needs the same
+evidence as admitting.
 
 ## Step 4 is local, always
 
@@ -47,17 +81,13 @@ rule lookup came first, an unsure read that happened to resolve to a known plate
 would open the barrier for the wrong car. Instead, a low-confidence read never
 reaches the rules at all.
 
-There are four named fallback outcomes. Each is an explicit path with an event
-behind it, visible to an operator:
+Every fallback is a named path with an event behind it, visible to an operator,
+and **the names are in the lane controller's code, not listed here.** This page
+used to carry the list, which made it a second copy of a set that lives
+somewhere else — and of two copies, the one nobody runs is the one that goes
+wrong.
 
-| Fallback | Means |
-|---|---|
-| `LOW_CONFIDENCE` | The read was not good enough to act on |
-| `NO_PLATE_READ` | No plate was found in the frames |
-| `UNKNOWN_VEHICLE` | Good read, no rule for this vehicle |
-| `STALE_RULES` | Good read, but the cached rules are too old to trust |
-
-None of these is "open anyway". None is "pick the most likely plate". A fallback
+No fallback is "open anyway", and none is "pick the most likely plate". A fallback
 costs an operator a glance at a screen; a wrong open bills a stranger's car to
 somebody else and, worse, teaches the operator that the confidence score means
 nothing.
@@ -67,14 +97,39 @@ looked at their own lane's read quality. It does not exist to be lowered until
 the fallback rate looks good in a report. Lowering it does not improve
 identification; it just moves failures from a visible column to an invisible one.
 
-## Step 7 is best effort, and last
+## Step 7: the ticket is not the entry
 
-Events queue locally and drain when the network allows. The queue is bounded, so
-a lane offline for a week does not run the controller out of memory — and when
-it overflows it *counts* what it dropped, because a gap in the record that
-nobody knows about is worse than one that is measured.
+A vend creates a PENDING entry, not a session. A driver can pull up, take a
+ticket and drive away, and a ticket no car ever followed is the oldest fraud in
+this business — the abandoned ticket walks a car out inside the free grace
+period.
 
-Nothing in steps 1–6 waits on step 7.
+A site may fit two loops after the barrier. Crossed A then B inside the
+configured window, the pending entry becomes a session. B then A is somebody
+backing out: no session and no occupancy, closed with its own reason. The window
+elapsing with nothing at all is a THIRD answer and is held as one — voiding it
+silently re-creates the abandoned ticket, and promoting it to a session invents
+an occupant who fills a garage on paper and never in concrete.
+
+A site with no loops after the gate is not refused. Every vehicle it lets in
+carries "nothing could confirm this", on the session and on an event of its own.
+
+Every loop count, spacing and window is a **per-site setting and an
+assumption**. Nothing in the lane controller measures a spacing, and each value is published with the events it governs so a reader of the
+record cannot mistake it for something the software established.
+
+## Step 8 is best effort, and last
+
+Events queue locally and drain when the network allows. The queue is bounded for
+the activity log and **unbounded for the session actions**: dropping the oldest
+items in a long outage would drop the session opens first, so cars that entered
+would have no session, exit to a refusal, and park free — the cheapest thing to
+throw away was the most expensive. A dropped log event is counted rather than
+silent, because a gap in the record that nobody knows about is worse than one
+that is measured.
+
+Nothing between a vehicle arriving and the barrier opening waits on a network
+call.
 
 ---
 

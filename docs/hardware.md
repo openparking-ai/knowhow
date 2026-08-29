@@ -27,10 +27,22 @@ negotiable.
 
 ## Detection
 
-- **Arming loop** — inductive, upstream of the barrier. Triggers the read. This
-  is the only loop the controller sees.
+Loops, and there are three kinds of them. Two of the three are counted in the
+lane's configuration, and those counts are published with the events they
+govern rather than being assumed by a reader.
+
+- **Arming loops** — inductive, upstream of the barrier. They trigger the read.
+  One or two: with two, both must read occupied together, so an object has to
+  span the gap between them.
 - **Closing loop** — under the barrier, wired to the barrier. The controller has
-  no visibility of it and no influence over it.
+  no visibility of it and no influence over it, and that is the safety case in
+  [lane-sequence.md](lane-sequence.md).
+- **Confirmation loops** — a pair after the barrier, read by the controller and
+  never driven by it. Crossed in order, they say a vehicle actually went
+  through, and which way. Zero or two, never one: one loop sees an occupancy
+  and cannot tell a vehicle going in from one backing out.
+
+Spacings and the confirmation window are site settings and assumptions.
 
 ## Cameras
 

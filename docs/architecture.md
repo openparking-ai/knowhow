@@ -1,7 +1,5 @@
 # Architecture
 
-Three moving parts, and a deliberate asymmetry between them.
-
 ```
 ┌──────────────────────┐         ┌───────────────────────┐
 │  lane controller     │ events  │  platform             │
@@ -54,7 +52,7 @@ Every tenant-owned table has row-level security enabled and forced. See
 ## What the lane holds
 
 - A cached copy of the rules for its own site, with an age on it.
-- A bounded queue of events not yet delivered.
+- A queue of events not yet delivered.
 - Nothing else. A lane controller is replaceable; losing one loses no data that
   was not already reported or is not about to be.
 
