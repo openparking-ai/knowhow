@@ -14,7 +14,7 @@ What a lane does, and what it does instead when it cannot.
 ```
 
 Steps 5 to 7 do not always happen. Three answers at step 3 and 4 stop the
-sequence there, each with its own event and none of them silent: nothing was
+sequence there, none of them silent: nothing was
 present, nothing could be identified, or the rules refuse this vehicle.
 
 ## Step 6 is the one to read twice
@@ -87,11 +87,6 @@ used to carry the list, which made it a second copy of a set that lives
 somewhere else — and of two copies, the one nobody runs is the one that goes
 wrong.
 
-What is worth saying here is the rule the names obey: every cause of a fallback
-gets its own name and an operator-visible consequence, and none is folded into
-another. Different causes need different things said to the driver, so they
-cannot share a code.
-
 No fallback is "open anyway", and none is "pick the most likely plate". A fallback
 costs an operator a glance at a screen; a wrong open bills a stranger's car to
 somebody else and, worse, teaches the operator that the confidence score means
@@ -116,17 +111,11 @@ elapsing with nothing at all is a THIRD answer and is held as one — voiding it
 silently re-creates the abandoned ticket, and promoting it to a session invents
 an occupant who fills a garage on paper and never in concrete.
 
-An exit is the other way round, and it is the one asymmetry: the vend at an exit
-IS the payment moment and the barrier opened, so the car is gone whatever the
-loops saw. The session closes and the stay is billed, flagged for a human.
-Otherwise fitting the loops would make a site worse than one without them.
-
 A site with no loops after the gate is not refused. Every vehicle it lets in
 carries "nothing could confirm this", on the session and on an event of its own.
 
 Every loop count, spacing and window is a **per-site setting and an
-assumption**. Nothing in the lane controller measures a spacing or a crossing
-time, and each value is published with the events it governs so a reader of the
+assumption**. Nothing in the lane controller measures a spacing, and each value is published with the events it governs so a reader of the
 record cannot mistake it for something the software established.
 
 ## Step 8 is best effort, and last

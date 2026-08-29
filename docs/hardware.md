@@ -42,8 +42,7 @@ govern rather than being assumed by a reader.
   through, and which way. Zero or two, never one: one loop sees an occupancy
   and cannot tell a vehicle going in from one backing out.
 
-Spacings and the confirmation window are site settings and assumptions. Nothing
-in the lane controller measures a spacing or a crossing time.
+Spacings and the confirmation window are site settings and assumptions.
 
 ## Cameras
 
