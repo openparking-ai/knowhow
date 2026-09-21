@@ -76,7 +76,8 @@ and it takes Ethernet.
 The reader's own screen carries the fee, so the payment leg adds no display
 hardware. The same screen collects a phone number, which is how the receipt is
 texted — on the S700 / S710 and the WisePOS E; Stripe's on-screen inputs are not
-offered on the Verifone readers.
+offered on the Verifone readers. What we hold of a payment, and what never
+reaches our code, is in [payments.md](payments.md).
 
 ### Offline payment
 
@@ -95,6 +96,8 @@ Stripe's own constraints, as they stand:
   within the last 24 hours.
 - The reader's software must have been updated within the last 30 days.
 - No magnetic stripe.
+- No tapping where Strong Customer Authentication is required: in the European
+  Economic Area the card is inserted and a PIN entered.
 - No refund and no cancellation until the payment has forwarded to Stripe.
 
 ## What a lane costs to run
