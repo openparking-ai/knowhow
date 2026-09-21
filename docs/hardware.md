@@ -59,6 +59,44 @@ The tiering exists because plate reading is dominated by optics and lighting,
 not by the model. A better camera on a hard lane beats a better model on a bad
 image, and it is usually cheaper.
 
+## Payment
+
+**A Stripe smart reader on the exit lane**, on the lane's network. Exit lanes
+only — an entry lane takes no money and gets no reader.
+
+The reader is driven by Stripe's server-driven integration: the controller
+commands it through the Stripe API, and nothing of ours runs on the device — no
+SDK, no application, only the reader's own software. That is why the
+controller's Python is sufficient. Stripe's server-driven readers today:
+**BBPOS WisePOS E**, **Stripe Reader S700 / S710**, and the Verifone smart
+readers (**V660p, UX700, P630, M425**; availability varies by country). The
+UX700 is the one Stripe names for unattended use, parking garages included,
+and it takes Ethernet.
+
+The reader's own screen carries the fee, so the payment leg adds no display
+hardware. The same screen collects a phone number, which is how the receipt is
+texted — on the S700 / S710 and the WisePOS E; Stripe's on-screen inputs are not
+offered on the Verifone readers.
+
+### Offline payment
+
+Opt-in, and not part of the default build.
+
+Stripe's offline mode exists only in its iOS, Android and React Native SDKs.
+There is no server-driven offline path, so the controller cannot hold a payment
+while the internet is down. A garage that opts into offline adds a small Android
+device on the same local network as the reader, running Stripe's SDK and
+collecting only.
+
+Stripe's own constraints, as they stand:
+
+- 10,000 USD, or the equivalent, per offline transaction.
+- The reader must have been connected online, on that same local network,
+  within the last 24 hours.
+- The reader's software must have been updated within the last 30 days.
+- No magnetic stripe.
+- No refund and no cancellation until the payment has forwarded to Stripe.
+
 ## What a lane costs to run
 
 To be filled in from the first installed site, not estimated here. Numbers in
