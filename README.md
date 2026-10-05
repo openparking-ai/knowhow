@@ -36,10 +36,7 @@ The code repositories are AGPL-3.0. Different licence, same intent: share alike.
 
 ## Contributing
 
-Corrections and additions are welcome, and require a signed CLA — see
-[CONTRIBUTING.md](CONTRIBUTING.md). Field experience that contradicts something
-written here is the most valuable contribution there is; please open an issue
-rather than staying quiet about it.
+Open Parking AI does not accept outside contributions. Pull requests, issues and comments are limited to the maintainers.
 
 ---
 
