@@ -46,7 +46,9 @@ other.
 - The event record: every arm, every identification, every decision, every vend,
   with confidence scores attached.
 
-Every tenant-owned table has row-level security enabled and forced. See
+Every tenant-owned table has row-level security enabled, and all but three have
+it forced. The three are credential tables (`lane_devices`, `operator_tokens`,
+`operator_users`), which a lookup has to read before the tenant is known. See
 [multi-tenancy-and-rls.md](multi-tenancy-and-rls.md).
 
 ## What the lane holds

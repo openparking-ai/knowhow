@@ -11,7 +11,7 @@ not happen.
 
 ## The template
 
-Every tenant-owned table:
+Every tenant-owned table except the three described below:
 
 ```sql
 CREATE TABLE <table> (
@@ -40,6 +40,20 @@ green.
 **`tenant_id NOT NULL`.** A nullable tenant column produces rows that match no
 policy and that no tenant can reach. They are invisible, not safe.
 
+## The exception: three credential tables
+
+Three tables are `ENABLE` without `FORCE`: `lane_devices`, `operator_tokens`
+and `operator_users`. Each is looked up by a credential (a lane's token, an
+operator's token, an owner's email), and the tenant is what the lookup has to
+find. No tenant context can be set yet, so a tenant policy would match nothing.
+
+The lookup runs in a `SECURITY DEFINER` function, as the table owner, and the
+owner is exempt from the table's policies because `FORCE` is off. The
+application role is not the owner, so the policies still bind it: with no
+tenant context it reads nothing, and with one it reads only that tenant's rows.
+The platform's `test/rls-coverage.test.js` checks that these three are the only
+tenant-owned tables that are not forced.
+
 ## The trap that makes all of this look like it works when it does not
 
 **A Postgres superuser bypasses row-level security unconditionally.** `FORCE`
@@ -64,7 +78,7 @@ The fix:
 ## Prove the test can fail
 
 A control that has never been observed failing is not known to be measuring
-anything. The platform repository ships `scripts/rls-fail-control.sh`, which
+anything. The platform repository ships `scripts/rls-fail-control.js`, which
 builds a scratch database, strips row-level security from it, and **requires the
 isolation suite to fail**. CI runs it on every pull request.
 
